@@ -3,7 +3,8 @@
   "builds": [
     {
       "src": "ETLPipe_API.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "50mb" }
     }
   ],
   "routes": [
@@ -11,5 +12,10 @@
       "src": "/(.*)",
       "dest": "ETLPipe_API.py"
     }
-  ]
+  ],
+  "functions": {
+    "ETLPipe_API.py": {
+      "maxDuration": 60
+    }
+  }
 }

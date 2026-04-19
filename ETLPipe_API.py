@@ -1,10 +1,11 @@
 import os
+import json
 import logging
 import pandas as pd
 from dotenv import load_dotenv
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -70,10 +71,10 @@ def server_started():
 def etl_pipe(body: ETLPipeRequest):
     try:
         response = etl_pipeline.run(body.brand, body.price)
-        return {"response": response.to_dict()}
+        return {"response": json.loads(response.to_json())}
     except Exception as e:
         logging.error('An Error Occurred during the ETL Process: ', exc_info=e)
-        return {"Error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == '__main__':
 

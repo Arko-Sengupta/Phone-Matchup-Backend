@@ -1,4 +1,5 @@
 
 # IGNORE Files
 **__pycache__
+**__init__.py
 .env
