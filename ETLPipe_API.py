@@ -1,10 +1,12 @@
 import os
-import json
 import logging
 import pandas as pd
 from dotenv import load_dotenv
-from flask import Blueprint, Flask, jsonify, request
-from flask_cors import CORS
+
+import uvicorn
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 from Scraper.Scraper import Scraper
 from Processor.Processor import Processor
@@ -51,40 +53,28 @@ class ETLPipeline:
             logging.error('An Error Occurred during the ETL Pipeline Execution: ', exc_info=e)
             raise e
 
-class ETLPipe_API:
+class ETLPipeRequest(BaseModel):
+    brand: str
+    price: str
 
-    def __init__(self) -> None:
-        self.app = Flask(__name__)
-        CORS(self.app)
-        self.etl_pipeline_blueprint = Blueprint('etl_pipeline', __name__)
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-        self.etl_pipeline_blueprint.add_url_rule('/', 'server_started', self.server_started, methods=['GET'])
-        self.etl_pipeline_blueprint.add_url_rule('/ETLPipe', 'etl_pipe', self.etl_pipe, methods=['POST'])
+etl_pipeline = ETLPipeline()
 
-        self.etl_pipeline = ETLPipeline()
+@app.get("/")
+def server_started():
+    return {"response": 200, "SERVER STARTED": True}
 
-    def server_started(self) -> jsonify:
-        try:
-            return jsonify({'response': 200, 'SERVER STARTED': True}), 200
-        except Exception as e:
-            logging.error('An Error Occurred while Starting the Server: ', exc_info=e)
-            raise e
-
-    def etl_pipe(self) -> jsonify:
-        try:
-            data = request.get_json()
-            brand, price = data['brand'], data['price']
-            response = self.etl_pipeline.run(brand, price)
-            return jsonify({'response': json.loads(response.to_json())}), 200
-        except Exception as e:
-            logging.error('An Error Occurred during the ETL Process: ', exc_info=e)
-            return jsonify({'Error': str(e)}), 400
-
-server = ETLPipe_API()
-server.app.register_blueprint(server.etl_pipeline_blueprint)
-
-app = server.app
+@app.post("/ETLPipe")
+def etl_pipe(body: ETLPipeRequest):
+    try:
+        response = etl_pipeline.run(body.brand, body.price)
+        return {"response": response.to_dict()}
+    except Exception as e:
+        logging.error('An Error Occurred during the ETL Process: ', exc_info=e)
+        return {"Error": str(e)}
 
 if __name__ == '__main__':
-    
-    app.run(debug=True)
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)

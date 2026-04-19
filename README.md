@@ -1,63 +1,107 @@
-# Phone-Matchup
+# Phone-Matchup - Backend
 
-## Overview
-Welcome to _**Phone Matchup**_! _**Phone Matchup**_ is a _**ETL Pipelines**_ designed to extract and Standardize _**Smart Phone**_ data. Whether you are a developer or contributor, this _**README.md**_ will guide you through the essentials of the project.
+FastAPI Backend For Phone-Matchup. Runs An ETL Pipeline To Extract, Standardize, And Filter Smartphone Data Based On Brand And Budget.
 
-## Table of Content
-1. [Introduction](#introduction)
-2. [Application UI](#application-ui)
-3. [Getting Started](#getting-started)
-4. [Installation](#installation)
-5. [Contribution](#contribution)
+## How It Works
 
-## Introduction
-**Phone Matchup** crafts an advanced **ETL Pipeline** designed to efficiently **Extract**, **Standardize**, and meticulously **Process** Smart Phone Data, tailoring the results to suit the user's budget preferences and specific brand preferences, delivering a seamless experience.
+Send A Request With Your Brand And Budget Preferences, And The Pipeline Scrapes Live Listings Across Major Indian Retail Platforms, Standardizes The Data, And Returns Filtered Results Matching Your Criteria.
 
-## Application UI
-![Screenshot 2024-10-14 165121](https://github.com/user-attachments/assets/bc912cb8-b94f-4888-9181-bdef0bf83bdb)
-![Screenshot 2024-10-14 165036](https://github.com/user-attachments/assets/d4a8cda1-fcb4-4ac4-8278-153b77bc0055)
+## Setup
 
-## Getting Started
-Before diving into the project, ensure you have the following prerequisites:
-- Programming Language: [Python 3.X](https://www.python.org/)
-- Package Manager: [pip](https://pypi.org/project/pip/)
-- Version Control: [Git](https://git-scm.com/)
-- Integrated Development Environment: [Visual Studio Code](https://code.visualstudio.com/), [PyCharm](https://www.jetbrains.com/pycharm/)
+1. Install Dependencies:
 
-## Installation
-1. Clone Repository
-   ```bash
-   https://github.com/Arko-Sengupta/Phone-Matchup.git
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-2. Navigate to the Backend Directory
-   ```bash
-   cd backend
-   ```
+2. Add Your Tavily API Key To `.env`:
 
-3. Install Dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
+```env
+TAVILY_API_KEY="<YOUR_TAVILY_API_KEY>"
+```
 
-4. Add your Tavily API Key to `.env`:
-   ```bash
-   TAVILY_API_KEY="<YOUR_TAVILY_API_KEY>"
-   ```
+3. Run The Server:
 
-5. Start Backend Server
-   ```bash
-   python ETLPipe_API.py
-   ```
+```bash
+uvicorn ETLPipe_API:app --reload --port 8000
+```
 
-6. Confirm Server Start: Open the below URL at Browser: [http://localhost:5000/](http://localhost:5000/)
+Server Starts At `http://localhost:8000`.
 
-7. Start the Application (from repo root)
-   ```bash
-   streamlit run frontend/App.py
-   ```
+## API
+
+**`GET /`** — Health Check.
+
+**`POST /ETLPipe`** — Run The ETL Pipeline For A Given Brand And Budget.
+
+Request Body:
+
+```json
+{
+  "brand": "Samsung",
+  "price": "20000"
+}
+```
+
+Response:
+
+```json
+{
+  "response": {
+    "Model": { "0": "Samsung Galaxy A35", ... },
+    "Price": { "0": 19999, ... },
+    ...
+  }
+}
+```
+
+## Dependencies
+
+| Package       | Version  |
+| ------------- | -------- |
+| fastapi       | 0.115.12 |
+| uvicorn       | 0.34.0   |
+| python-dotenv | 1.0.1    |
+| tavily-python | 0.7.12   |
+| requests      | 2.32.5   |
+| pandas        | 3.0.1    |
+| pydantic      | 2.9.2    |
+
+## Project Structure
+
+```
+Phone-Matchup-Backend/
+├── ETLPipe_API.py         — Routes, ETL Pipeline Orchestration
+├── Scraper/
+│   └── Scraper.py         — Multi-Platform Web Scraping Via Tavily
+├── Standardizer/
+│   └── Standardizer.py    — Data Standardization Logic
+├── Processor/
+│   └── Processor.py       — Filtering And Processing Logic
+├── .env                   — Environment Config
+├── requirements.txt       — Dependencies
+├── vercel.json            — Vercel Deployment Config
+└── .gitignore
+```
+
+## Supported Platforms
+
+Scrapes Smartphone Listings From:
+
+- Flipkart
+- Amazon India
+- Croma
+- Reliance Digital
+- Vijay Sales
+- Tata Cliq
+- Poorvika
+- Samsung Shop
+
+## Deployment
+
+Deployed On **Vercel**. Set `TAVILY_API_KEY` As An Environment Variable In Your Vercel Project Settings Before Deploying.
 
 ## Contribution
-If you'd like to contribute, follow the guidelines
-- Create a branch using the format `Phone-Matchup_<YourUsername>` when contributing to the project.
-- Add the label `Contributor` to your contributions to distinguish them within the project.
+
+- Create A Branch Using The Format `Phone-Matchup_<YourUsername>` When Contributing.
+- Add The Label `Contributor` To Your Contributions To Distinguish Them Within The Project.
