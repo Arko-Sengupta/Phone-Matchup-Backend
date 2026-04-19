@@ -8,5 +8,5 @@ tavily-python==0.7.12
 requests==2.32.5
 
 # Data Processing
-pandas==3.0.1
+pandas==2.2.3
 pydantic==2.9.2
