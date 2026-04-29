@@ -23,7 +23,7 @@ TAVILY_API_KEY="<YOUR_TAVILY_API_KEY>"
 3. Run The Server:
 
 ```bash
-uvicorn ETLPipe_API:app --reload --port 8000
+uvicorn ETLPipeAPI:app --reload --port 8000
 ```
 
 Server Starts At `http://localhost:8000`.
@@ -71,16 +71,17 @@ Response:
 
 ```
 Phone-Matchup-Backend/
-├── ETLPipe_API.py         — Routes, ETL Pipeline Orchestration
-├── Scraper/
-│   └── Scraper.py         — Multi-Platform Web Scraping Via Tavily
-├── Standardizer/
-│   └── Standardizer.py    — Data Standardization Logic
-├── Processor/
-│   └── Processor.py       — Filtering And Processing Logic
-├── .env                   — Environment Config
-├── requirements.txt       — Dependencies
-├── vercel.json            — Vercel Deployment Config
+├── ETLPipeAPI.py              — Routes, ETL Pipeline Orchestration
+├── Tools/
+│   ├── Scraper/
+│   │   └── Scraper.py         — Multi-Platform Web Scraping Via Tavily
+│   ├── Standardizer/
+│   │   └── Standardizer.py    — Data Standardization Logic
+│   └── Processor/
+│       └── Processor.py       — Filtering And Processing Logic
+├── .env                       — Environment Config
+├── requirements.txt           — Dependencies
+├── vercel.json                — Vercel Deployment Config
 └── .gitignore
 ```
 

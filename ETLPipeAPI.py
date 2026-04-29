@@ -9,9 +9,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 
-from Scraper.Scraper import Scraper
-from Processor.Processor import Processor
-from Standardizer.Standardizer import Standardizer
+from Tools.Scraper.Scraper import Scraper
+from Tools.Processor.Processor import Processor
+from Tools.Standardizer.Standardizer import Standardizer
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -23,32 +23,32 @@ class ETLPipeline:
         self.standardizer = Standardizer()
         self.processor = Processor()
 
-    def extract_data(self, query: str, budget: int) -> list:
+    def ExtractData(self, query: str, budget: int) -> list:
         try:
-            return self.scraper.run(query, budget)
+            return self.scraper.Run(query, budget)
         except Exception as e:
             logging.error('An Error Occurred while Extracting Data: ', exc_info=e)
             raise e
 
-    def transform_data(self, raw_data: list, brand: str) -> pd.DataFrame:
+    def TransformData(self, raw_data: list, brand: str) -> pd.DataFrame:
         try:
-            return self.standardizer.run(raw_data, brand)
+            return self.standardizer.Run(raw_data, brand)
         except Exception as e:
             logging.error('An Error Occurred while Transforming Data: ', exc_info=e)
             raise e
 
-    def filter_data(self, transformed_data: pd.DataFrame, price: str) -> pd.DataFrame:
+    def FilterData(self, transformed_data: pd.DataFrame, price: str) -> pd.DataFrame:
         try:
-            return self.processor.run(transformed_data, price)
+            return self.processor.Run(transformed_data, price)
         except Exception as e:
             logging.error('An Error Occurred while Filtering Data: ', exc_info=e)
             raise e
 
-    def run(self, brand: str, price: str) -> pd.DataFrame:
+    def Run(self, brand: str, price: str) -> pd.DataFrame:
         try:
-            raw_data = self.extract_data(brand, int(price))
-            transformed_data = self.transform_data(raw_data, brand)
-            filtered_data = self.filter_data(transformed_data, price)
+            raw_data = self.ExtractData(brand, int(price))
+            transformed_data = self.TransformData(raw_data, brand)
+            filtered_data = self.FilterData(transformed_data, price)
             return filtered_data
         except Exception as e:
             logging.error('An Error Occurred during the ETL Pipeline Execution: ', exc_info=e)
@@ -64,13 +64,13 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 etl_pipeline = ETLPipeline()
 
 @app.get("/")
-def server_started():
+def ServerStarted():
     return {"response": 200, "SERVER STARTED": True}
 
 @app.post("/ETLPipe")
-def etl_pipe(body: ETLPipeRequest):
+def ETLPipe(body: ETLPipeRequest):
     try:
-        response = etl_pipeline.run(body.brand, body.price)
+        response = etl_pipeline.Run(body.brand, body.price)
         return {"response": json.loads(response.to_json())}
     except Exception as e:
         logging.error('An Error Occurred during the ETL Process: ', exc_info=e)

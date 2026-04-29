@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "ETLPipe_API.py",
+      "src": "ETLPipeAPI.py",
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "50mb",
@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "ETLPipe_API.py"
+      "dest": "ETLPipeAPI.py"
     }
   ]
 }

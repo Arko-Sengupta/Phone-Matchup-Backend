@@ -7,7 +7,7 @@ class Processor:
     def __init__(self) -> None:
         pass
 
-    def run(self, transformed_data: pd.DataFrame, price: str) -> pd.DataFrame:
+    def Run(self, transformed_data: pd.DataFrame, price: str) -> pd.DataFrame:
         try:
             df = transformed_data.copy()
             if df.empty:

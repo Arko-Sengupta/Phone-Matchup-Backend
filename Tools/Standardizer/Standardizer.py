@@ -29,7 +29,7 @@ class PhoneProduct(BaseModel):
     battery_power: Optional[int] = None
 
     @model_validator(mode='after')
-    def extract_from_content(self):
+    def ExtractFromContent(self):
         text = f"{self.title} {self.content}"
 
         if '(' in self.title:
@@ -143,28 +143,28 @@ BRAND_MATCH_ALIASES = {
 }
 
 class Standardizer:
-    def is_product_page(self, title: str, url: str) -> bool:
+    def IsProductPage(self, title: str, url: str) -> bool:
         if NON_PRODUCT_URL_PATTERNS.search(url):
             return False
         if NON_PRODUCT_TITLE_PATTERNS.search(title):
             return False
         return True
 
-    def matches_brand(self, title: str, brand: str) -> bool:
+    def MatchesBrand(self, title: str, brand: str) -> bool:
         core = brand.lower().replace(' smartphones', '').replace(' smartphone', '').strip()
         aliases = BRAND_MATCH_ALIASES.get(core, [core])
         return any(a in title.lower() for a in aliases)
 
-    def run(self, raw_results: list, brand: str = '') -> pd.DataFrame:
+    def Run(self, raw_results: list, brand: str = '') -> pd.DataFrame:
         products = []
         for item in raw_results:
             try:
                 title = item.get('title', '')
                 url = item.get('url', '')
                 content = item.get('content', '')
-                if not self.is_product_page(title, url):
+                if not self.IsProductPage(title, url):
                     continue
-                if brand and not self.matches_brand(title, brand):
+                if brand and not self.MatchesBrand(title, brand):
                     continue
                 phone = PhoneProduct(**item)
                 if phone.price and phone.ram:
