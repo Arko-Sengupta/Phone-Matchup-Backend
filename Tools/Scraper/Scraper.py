@@ -50,6 +50,7 @@ class Scraper:
                 max_results=10,
                 search_depth="advanced",
                 include_answer=False,
+                days=30,
             )
             results = []
             for r in response.get("results", []):
